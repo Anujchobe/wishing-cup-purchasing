@@ -8,7 +8,7 @@ Facts (use every one, and copy each price and percentage exactly as written):
 $facts
 
 Rules:
-- Copy each price exactly as written, with its unit, for example "$3.47/lb".
+- Copy each price exactly as written, with its unit, for example "$$3.47/lb".
 - Do not add any other prices, numbers, percentages, deadlines or claims.
 - Do not name or describe the other suppliers.
 - Keep it under 180 words. Sign it "$sender".
