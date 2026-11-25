@@ -1,0 +1,108 @@
+# Wishing Cup purchasing app settings.
+#
+# Money is always whole cents: 50000 means $500.00.
+# Times and dates are Boston time (America/New_York); that is fixed in code.
+# AI settings are not here. They live only in .env (copy .env.example).
+
+app:
+  name: Wishing Cup purchasing
+  data_dir: data          # database and fake supplier files are kept here
+  random_seed: 42         # same seed = same fake prices on every run and every machine
+  fake_data_label: >-
+    FAKE TEST DATA: supplier prices, products and order confirmations are invented
+    for testing. They are not real Sysco, US Foods or PFG prices.
+
+locations:
+  - code: court_st
+    name: Court St Cafe
+    kind: cafe
+    address: ""                     # street address for purchase orders (left blank on purpose)
+  - code: factory
+    name: Factory
+    kind: factory
+    address: ""
+
+suppliers:
+  - code: sysco
+    name: Sysco
+    min_order_cents: 50000          # $500.00
+    delivery_fee_cents: 2500        # $25.00
+    delivery_weekdays: [Tue, Thu, Sat]
+    lead_time_days: 1
+    serves_locations: [court_st, factory]
+    sales_rep: {name: Sam Rivera (fake), email: rep.sysco@example.com}
+
+  - code: usfoods
+    name: US Foods
+    min_order_cents: 40000          # $400.00
+    delivery_fee_cents: 3500        # $35.00
+    delivery_weekdays: [Mon, Wed, Fri]
+    lead_time_days: 2
+    serves_locations: [court_st, factory]
+    sales_rep: {name: Dana Kim (fake), email: rep.usfoods@example.com}
+
+  - code: pfg
+    name: PFG
+    min_order_cents: 75000          # $750.00
+    delivery_fee_cents: 0           # free delivery
+    delivery_weekdays: [Tue, Fri]
+    lead_time_days: 3
+    serves_locations: [factory]
+    sales_rep: {name: Lee Ortiz (fake), email: rep.pfg@example.com}
+
+  - code: supplier4
+    name: Supplier 4 (placeholder)
+    placeholder: true
+    min_order_cents: 15000          # $150.00
+    delivery_fee_cents: 1500        # $15.00
+    delivery_weekdays: [Mon, Thu]
+    lead_time_days: 4
+    serves_locations: [court_st]
+    sales_rep: {name: TBD (fake), email: rep.supplier4@example.com}
+
+purchasing:
+  main_supplier: sysco
+  match_threshold: 0.05             # ask the main supplier to price-match when another is >5% cheaper
+  price_jump_limit: 0.50            # a price up >50% since last week is not used until a person checks it
+  quantity_confirm_multiple: 3      # ask to confirm a quantity >3x the most this location ever ordered
+  market_change_threshold: 0.10     # price watch: up >10% at every supplier = market change
+  replay_weeks: 8                   # savings replay looks back this many weeks
+  price_watch_weeks: 4              # price watch compares the latest price with this many weeks earlier
+
+approval:
+  approver: owner
+  price_max_age_hours: 24           # older prices must be fetched again
+
+ai:
+  eval_threshold: 0.9               # below this score the model is "not tested": a person confirms every AI answer
+  retries_on_bad_answer: 1          # one more try, then text matching + flag for a person
+  timeout_seconds: 30               # time limit for each AI call
+  rate_limit_retries: 3             # "too many requests": wait and try again this many times
+  rate_limit_max_wait_seconds: 30
+  match_confidence_min: 0.7         # AI matches less sure than this go to a person
+
+intake:                             # reading requests with no AI
+  product_min_score: 90             # text-match score (0-100) needed to accept a product name...
+  product_min_margin: 10            # ...and how far ahead of the next-best name it must be
+
+matching:
+  candidates_per_supplier: 5        # closest supplier products shown to the AI
+  text_match_min_score: 90          # no AI: accept the best product at or above this score...
+  text_match_min_margin: 10         # ...if it's this far ahead of the next one and the pack text reads
+  suggestion_min_score: 60          # below this, no suggestion is saved at all
+
+supplier_calls:
+  timeout_seconds: 2.0
+  retries: 2                        # tries after the first one fails
+  retry_wait_seconds: 0.5
+
+# Switches that fake problems, for testing. All off.
+faults:
+  ai_down: false
+  slow_seconds: 1.0                 # delay when a supplier is "slow"; set above timeout_seconds to cause timeouts
+  flaky_failure_rate: 0.3           # share of calls that fail when a supplier is "flaky"
+  suppliers:
+    sysco:     {down: false, slow: false, flaky: false}
+    usfoods:   {down: false, slow: false, flaky: false}
+    pfg:       {down: false, slow: false, flaky: false}
+    supplier4: {down: false, slow: false, flaky: false}

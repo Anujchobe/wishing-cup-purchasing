@@ -1,0 +1,3 @@
+Our ingredient: $name (code $code), measured in $base_unit.
+
+$suppliers

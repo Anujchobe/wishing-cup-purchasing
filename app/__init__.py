@@ -1,0 +1,1 @@
+"""Wishing Cup purchasing app."""

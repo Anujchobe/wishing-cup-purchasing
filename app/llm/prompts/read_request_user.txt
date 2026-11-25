@@ -1,0 +1,4 @@
+Manager's message:
+<<<
+$text
+>>>

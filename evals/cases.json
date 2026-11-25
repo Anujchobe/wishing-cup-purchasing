@@ -1,0 +1,592 @@
+{
+  "about": "AI test cases. 'today' is the date each request is read on. read_request: the lines are product code -> amount in base units (lb, fl oz, each), as code converts them; needed_by null means no date can be read; unclear true means something must be listed as unclear, and unclear_mentions are words it must mention. match_product: for each supplier, the right SKU (or null when the supplier doesn't sell it) and the case size in base units. A case passes only if everything in it is right.",
+  "today": "2026-11-24",
+  "read_request": [
+    {
+      "id": "three_items_by_thursday",
+      "text": "Need 50 lb all-purpose flour, 30 lb unsalted butter and 4 gallons of heavy cream by Thursday",
+      "expect": {
+        "lines": {
+          "ap_flour": "50",
+          "butter_unsalted": "30",
+          "heavy_cream": "512"
+        },
+        "needed_by": "2026-11-26"
+      }
+    },
+    {
+      "id": "two_dozen_eggs",
+      "text": "2 dozen eggs and 10 lbs cream cheese for Friday",
+      "expect": {
+        "lines": {
+          "eggs": "24",
+          "cream_cheese": "10"
+        },
+        "needed_by": "2026-11-27"
+      }
+    },
+    {
+      "id": "product_we_dont_sell",
+      "text": "5 lb matcha powder and 2 lb saffron, by tomorrow",
+      "expect": {
+        "lines": {
+          "matcha_powder": "5"
+        },
+        "needed_by": "2026-11-25",
+        "unclear": true,
+        "unclear_mentions": [
+          "saffron"
+        ]
+      }
+    },
+    {
+      "id": "metric_amounts",
+      "text": "1.5 kg dark chocolate callets and 2 liters oat milk, needed Monday",
+      "expect": {
+        "lines": {
+          "dark_chocolate": "3.306933933",
+          "oat_milk": "67.628045404"
+        },
+        "needed_by": "2026-11-30"
+      }
+    },
+    {
+      "id": "item_without_an_amount",
+      "text": "some lemons and 3 gallons whole milk by Wednesday",
+      "expect": {
+        "lines": {
+          "whole_milk": "384"
+        },
+        "needed_by": "2026-11-25",
+        "unclear": true,
+        "unclear_mentions": [
+          "lemon"
+        ]
+      }
+    },
+    {
+      "id": "amounts_in_words",
+      "text": "two dozen eggs and a gallon of whole milk. Friday please",
+      "expect": {
+        "lines": {
+          "eggs": "24",
+          "whole_milk": "128"
+        },
+        "needed_by": "2026-11-27"
+      }
+    },
+    {
+      "id": "whole_cases",
+      "text": "3 cases of unsalted butter and 20 lb granulated sugar by Thursday",
+      "expect": {
+        "lines": {
+          "granulated_sugar": "20"
+        },
+        "needed_by": "2026-11-26",
+        "unclear": true,
+        "unclear_mentions": [
+          "butter"
+        ]
+      }
+    },
+    {
+      "id": "half_a_case",
+      "text": "Half a case of heavy cream and 12 lb cake flour, Friday",
+      "expect": {
+        "lines": {
+          "cake_flour": "12"
+        },
+        "needed_by": "2026-11-27",
+        "unclear": true,
+        "unclear_mentions": [
+          "cream"
+        ]
+      }
+    },
+    {
+      "id": "fractions",
+      "text": "1 1/2 lb matcha powder and 3/4 lb fine sea salt by Dec 3",
+      "expect": {
+        "lines": {
+          "matcha_powder": "1.5",
+          "sea_salt": "0.75"
+        },
+        "needed_by": "2026-12-03"
+      }
+    },
+    {
+      "id": "ounces_by_weight",
+      "text": "24 oz cocoa powder and 8 oz baking powder by Thursday",
+      "expect": {
+        "lines": {
+          "cocoa_powder": "1.5",
+          "baking_powder": "0.5"
+        },
+        "needed_by": "2026-11-26"
+      }
+    },
+    {
+      "id": "ounces_on_a_liquid",
+      "text": "32 oz vanilla extract and 10 lb cream cheese by Friday",
+      "expect": {
+        "lines": {
+          "cream_cheese": "10"
+        },
+        "needed_by": "2026-11-27",
+        "unclear": true,
+        "unclear_mentions": [
+          "vanilla"
+        ]
+      }
+    },
+    {
+      "id": "which_milk",
+      "text": "20 gallons of milk and 30 lemons by Friday",
+      "expect": {
+        "lines": {
+          "lemons": "30"
+        },
+        "needed_by": "2026-11-27",
+        "unclear": true,
+        "unclear_mentions": [
+          "milk"
+        ]
+      }
+    },
+    {
+      "id": "nothing_we_sell",
+      "text": "Can you get us 10 lb pistachio paste and 5 lb dried rose petals by Friday?",
+      "expect": {
+        "lines": {},
+        "needed_by": "2026-11-27",
+        "unclear": true,
+        "unclear_mentions": [
+          "pistachio",
+          "rose"
+        ]
+      }
+    },
+    {
+      "id": "too_vague",
+      "text": "Just the usual for the weekend, thanks!",
+      "expect": {
+        "lines": {},
+        "needed_by": null,
+        "unclear": true
+      }
+    },
+    {
+      "id": "cup_size_is_not_an_amount",
+      "text": "1500 hot cups (12 oz), 1500 lids for them, and 200 fl oz caramel sauce, the good one. Need it by Dec 3.",
+      "expect": {
+        "lines": {
+          "hot_cup_12oz": "1500",
+          "cup_lid_12oz": "1500",
+          "caramel_sauce": "200"
+        },
+        "needed_by": "2026-12-03"
+      }
+    }
+  ],
+  "match_product": [
+    {
+      "id": "match_butter_unsalted",
+      "product": "butter_unsalted",
+      "why": "PFG abbreviates it 'UNSLTD BTR'",
+      "expect": {
+        "sysco": {
+          "sku": "9226534",
+          "pack": "36",
+          "pack_text": "36/1 LB"
+        },
+        "usfoods": {
+          "sku": "US784021",
+          "pack": "30",
+          "pack_text": "30x1 lb"
+        },
+        "pfg": {
+          "sku": "P-91625",
+          "pack": "36",
+          "pack_text": "CS 36 / 1#"
+        },
+        "supplier4": {
+          "sku": "S4-BUTTER-UNSALTED",
+          "pack": "12",
+          "pack_text": "Case of 12 x 1 pound"
+        }
+      }
+    },
+    {
+      "id": "match_heavy_cream",
+      "product": "heavy_cream",
+      "why": "must not pick cream cheese; PFG writes 'HEAVY CRM'",
+      "expect": {
+        "sysco": {
+          "sku": "8691752",
+          "pack": "384",
+          "pack_text": "12/1 QT"
+        },
+        "usfoods": {
+          "sku": "US473547",
+          "pack": "384",
+          "pack_text": "6x64 fl oz"
+        },
+        "pfg": {
+          "sku": "P-53590",
+          "pack": "384",
+          "pack_text": "CS 12 / 1 QT"
+        },
+        "supplier4": {
+          "sku": "S4-HEAVY-CREAM",
+          "pack": "384",
+          "pack_text": "Case of 12 x 1 quart"
+        }
+      }
+    },
+    {
+      "id": "match_vanilla_extract",
+      "product": "vanilla_extract",
+      "why": "Sysco writes fluid ounces as plain 'OZ'; PFG 'PURE VAN EXT'",
+      "expect": {
+        "sysco": {
+          "sku": "7978167",
+          "pack": "128",
+          "pack_text": "4/32 OZ"
+        },
+        "usfoods": {
+          "sku": "US214531",
+          "pack": "128",
+          "pack_text": "1x1 gal"
+        },
+        "pfg": {
+          "sku": "P-85884",
+          "pack": "192",
+          "pack_text": "CS 12 / 16 FL OZ"
+        },
+        "supplier4": {
+          "sku": "S4-VANILLA-EXTRACT",
+          "pack": "96",
+          "pack_text": "Case of 6 x 16 fl. ounces"
+        }
+      }
+    },
+    {
+      "id": "match_cream_cheese",
+      "product": "cream_cheese",
+      "why": "PFG writes 'CRM CHS'; must not pick heavy cream",
+      "expect": {
+        "sysco": {
+          "sku": "6148056",
+          "pack": "30",
+          "pack_text": "10/3 LB"
+        },
+        "usfoods": {
+          "sku": "US266590",
+          "pack": "18",
+          "pack_text": "6x3 lb"
+        },
+        "pfg": {
+          "sku": "P-89173",
+          "pack": "30",
+          "pack_text": "30# BAG"
+        },
+        "supplier4": {
+          "sku": "S4-CREAM-CHEESE",
+          "pack": "6",
+          "pack_text": "Case of 12 x 8 ounces"
+        }
+      }
+    },
+    {
+      "id": "match_cake_flour",
+      "product": "cake_flour",
+      "why": "Supplier 4 doesn't sell it: answer none, not all-purpose flour",
+      "expect": {
+        "sysco": {
+          "sku": "7316484",
+          "pack": "50",
+          "pack_text": "1/50 LB"
+        },
+        "usfoods": {
+          "sku": "US321238",
+          "pack": "25",
+          "pack_text": "1x25 lb"
+        },
+        "pfg": {
+          "sku": "P-58693",
+          "pack": "50",
+          "pack_text": "50# BAG"
+        },
+        "supplier4": {
+          "sku": null,
+          "pack": null
+        }
+      }
+    },
+    {
+      "id": "match_powdered_sugar",
+      "product": "powdered_sugar",
+      "why": "Supplier 4 doesn't sell it: answer none, not granulated sugar",
+      "expect": {
+        "sysco": {
+          "sku": "8579361",
+          "pack": "50",
+          "pack_text": "1/50 LB"
+        },
+        "usfoods": {
+          "sku": "US736762",
+          "pack": "24",
+          "pack_text": "12x2 lb"
+        },
+        "pfg": {
+          "sku": "P-86136",
+          "pack": "50",
+          "pack_text": "50# BAG"
+        },
+        "supplier4": {
+          "sku": null,
+          "pack": null
+        }
+      }
+    },
+    {
+      "id": "match_cocoa_powder",
+      "product": "cocoa_powder",
+      "why": "Supplier 4 doesn't sell it: answer none, not dark chocolate",
+      "expect": {
+        "sysco": {
+          "sku": "4895929",
+          "pack": "25",
+          "pack_text": "1/25 LB"
+        },
+        "usfoods": {
+          "sku": "US597837",
+          "pack": "13.227735731",
+          "pack_text": "6x1 kg"
+        },
+        "pfg": {
+          "sku": "P-80617",
+          "pack": "50",
+          "pack_text": "50# BAG"
+        },
+        "supplier4": {
+          "sku": null,
+          "pack": null
+        }
+      }
+    },
+    {
+      "id": "match_strawberries",
+      "product": "strawberries",
+      "why": "PFG writes 'STRAWB'",
+      "expect": {
+        "sysco": {
+          "sku": "8671549",
+          "pack": "8",
+          "pack_text": "8/1 LB"
+        },
+        "usfoods": {
+          "sku": "US878960",
+          "pack": "8",
+          "pack_text": "1x8 lb"
+        },
+        "pfg": {
+          "sku": "P-19165",
+          "pack": "8",
+          "pack_text": "CS 8 / 1#"
+        },
+        "supplier4": {
+          "sku": "S4-STRAWBERRIES",
+          "pack": "8",
+          "pack_text": "Case of 4 x 2 pounds"
+        }
+      }
+    },
+    {
+      "id": "match_dark_chocolate",
+      "product": "dark_chocolate",
+      "why": "metric packs (kg) at three suppliers",
+      "expect": {
+        "sysco": {
+          "sku": "4152245",
+          "pack": "22.046226218",
+          "pack_text": "2/5 KG"
+        },
+        "usfoods": {
+          "sku": "US592687",
+          "pack": "22.046226218",
+          "pack_text": "4x2.5 kg"
+        },
+        "pfg": {
+          "sku": "P-61311",
+          "pack": "22",
+          "pack_text": "22# BAG"
+        },
+        "supplier4": {
+          "sku": "S4-DARK-CHOCOLATE",
+          "pack": "13.227735731",
+          "pack_text": "Case of 6 x 1 kilogram"
+        }
+      }
+    },
+    {
+      "id": "match_matcha_powder",
+      "product": "matcha_powder",
+      "why": "grams and kilograms; PFG doesn't sell it",
+      "expect": {
+        "sysco": {
+          "sku": "4107635",
+          "pack": "2.204622622",
+          "pack_text": "1/1 KG"
+        },
+        "usfoods": {
+          "sku": "US394465",
+          "pack": "2.204622622",
+          "pack_text": "10x100 g"
+        },
+        "pfg": {
+          "sku": null,
+          "pack": null
+        },
+        "supplier4": {
+          "sku": "S4-MATCHA-POWDER",
+          "pack": "1.102311311",
+          "pack_text": "Case of 1 x 500 grams"
+        }
+      }
+    },
+    {
+      "id": "match_oat_milk",
+      "product": "oat_milk",
+      "why": "Sysco 'OZ' is fluid ounces; Supplier 4 in ml; PFG doesn't sell it",
+      "expect": {
+        "sysco": {
+          "sku": "8047673",
+          "pack": "384",
+          "pack_text": "12/32 OZ"
+        },
+        "usfoods": {
+          "sku": "US942316",
+          "pack": "384",
+          "pack_text": "12x32 fl oz"
+        },
+        "pfg": {
+          "sku": null,
+          "pack": null
+        },
+        "supplier4": {
+          "sku": "S4-OAT-MILK",
+          "pack": "191.928392856",
+          "pack_text": "Case of 6 x 946 ml"
+        }
+      }
+    },
+    {
+      "id": "match_caramel_sauce",
+      "product": "caramel_sauce",
+      "why": "liters at US Foods; Supplier 4 doesn't sell it",
+      "expect": {
+        "sysco": {
+          "sku": "7501317",
+          "pack": "384",
+          "pack_text": "6/64 OZ"
+        },
+        "usfoods": {
+          "sku": "US739431",
+          "pack": "255.634011626",
+          "pack_text": "4x1.89 L"
+        },
+        "pfg": {
+          "sku": "P-99012",
+          "pack": "384",
+          "pack_text": "CS 6 / 64 FL OZ"
+        },
+        "supplier4": {
+          "sku": null,
+          "pack": null
+        }
+      }
+    },
+    {
+      "id": "match_eggs",
+      "product": "eggs",
+      "why": "dozens: '1/15 DZ', '1x30 dz', '15 DOZ', '5 dozen'",
+      "expect": {
+        "sysco": {
+          "sku": "6679765",
+          "pack": "180",
+          "pack_text": "1/15 DZ"
+        },
+        "usfoods": {
+          "sku": "US843989",
+          "pack": "360",
+          "pack_text": "1x30 dz"
+        },
+        "pfg": {
+          "sku": "P-63750",
+          "pack": "180",
+          "pack_text": "15 DOZ"
+        },
+        "supplier4": {
+          "sku": "S4-EGGS",
+          "pack": "60",
+          "pack_text": "Case of 1 x 5 dozen"
+        }
+      }
+    },
+    {
+      "id": "match_hot_cup_12oz",
+      "product": "hot_cup_12oz",
+      "why": "must not pick the lid for the same cup",
+      "expect": {
+        "sysco": {
+          "sku": "9033615",
+          "pack": "1000",
+          "pack_text": "1/1000 CT"
+        },
+        "usfoods": {
+          "sku": "US487491",
+          "pack": "1000",
+          "pack_text": "20x50 ct"
+        },
+        "pfg": {
+          "sku": "P-93787",
+          "pack": "1000",
+          "pack_text": "1000 CT"
+        },
+        "supplier4": {
+          "sku": "S4-HOT-CUP-12OZ",
+          "pack": "500",
+          "pack_text": "Case of 1 x 500 count"
+        }
+      }
+    },
+    {
+      "id": "match_cup_lid_12oz",
+      "product": "cup_lid_12oz",
+      "why": "must not pick the cup",
+      "expect": {
+        "sysco": {
+          "sku": "3887873",
+          "pack": "1000",
+          "pack_text": "1/1000 CT"
+        },
+        "usfoods": {
+          "sku": "US712163",
+          "pack": "1000",
+          "pack_text": "10x100 ct"
+        },
+        "pfg": {
+          "sku": "P-95158",
+          "pack": "1000",
+          "pack_text": "1000 CT"
+        },
+        "supplier4": {
+          "sku": "S4-CUP-LID-12OZ",
+          "pack": "500",
+          "pack_text": "Case of 1 x 500 count"
+        }
+      }
+    }
+  ]
+}

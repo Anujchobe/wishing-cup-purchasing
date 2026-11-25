@@ -1,0 +1,15 @@
+# Exact pins for every library the project imports directly. Python 3.11.
+streamlit==1.41.1
+sqlmodel==0.0.22
+SQLAlchemy==2.0.36
+pydantic==2.9.2
+rapidfuzz==3.10.1
+PuLP==2.9.0
+openai==1.55.3
+PyYAML==6.0.2
+# Not in the original tool list, but needed:
+python-dotenv==1.0.1   # reads .env
+tzdata==2024.2         # Windows has no built-in timezone database; Boston time needs it
+# Tests
+pytest==8.3.4
+hypothesis==6.112.0
