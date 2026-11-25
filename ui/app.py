@@ -3,8 +3,10 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-if str(ROOT) not in sys.path:  # Streamlit puts ui/ on the path, not the project root
-    sys.path.insert(0, str(ROOT))
+# Streamlit puts ui/ first on the path, where ui/app.py would hide the app/ package. Put the root first.
+if str(ROOT) in sys.path:
+    sys.path.remove(str(ROOT))
+sys.path.insert(0, str(ROOT))
 
 import streamlit as st  # noqa: E402
 
